@@ -1,0 +1,69 @@
+// This is the Prisma schema for your School Management System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("STUDENT") // ADMIN, OWNER, TEACHER, STUDENT
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  teacherClasses Class[]      @relation("TeacherClasses")
+  enrollments    Enrollment[]
+  grades         Grade[]
+
+  // Profile Fields (Optional, mostly for Students)
+  dateOfBirth DateTime?
+  fatherName  String?
+  motherName  String?
+  cpf         String?
+  phone       String?
+  street      String?
+  houseNumber String?
+}
+
+model Class {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  teacherId   String
+  teacher     User         @relation("TeacherClasses", fields: [teacherId], references: [id])
+  enrollments Enrollment[]
+  grades      Grade[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  studentId String
+  classId   String
+  student   User     @relation(fields: [studentId], references: [id])
+  class     Class    @relation(fields: [classId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, classId])
+}
+
+model Grade {
+  id          String   @id @default(cuid())
+  value       Float
+  description String?
+  studentId   String
+  classId     String
+  student     User     @relation(fields: [studentId], references: [id])
+  class       Class    @relation(fields: [classId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
