@@ -30,7 +30,19 @@ export default function LoginPage() {
     })
 
     if (result?.ok) {
-      window.location.href = "/"
+      // Fetch the updated session to get the role
+      const response = await fetch("/api/auth/session")
+      const session = await response.json()
+
+      if (session?.user?.role === "OWNER") {
+        window.location.href = "/owner"
+      } else if (session?.user?.role === "TEACHER") {
+        window.location.href = "/teacher"
+      } else if (session?.user?.role === "STUDENT") {
+        window.location.href = "/student" // Or whatever the student home is
+      } else {
+        window.location.href = "/" // Fallback
+      }
     } else {
       setIsLoading(false)
       setError("Credenciais inválidas.")

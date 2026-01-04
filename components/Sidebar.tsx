@@ -33,6 +33,7 @@ export function Sidebar({ role }: SidebarProps) {
         ],
         STUDENT: [
             { name: "Boletim", href: "/student", icon: GraduationCap },
+            { name: "Financeiro", href: "/student/financial", icon: BookOpen },
         ],
     }
 
